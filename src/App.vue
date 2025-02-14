@@ -5,10 +5,10 @@ import movieDetail from "./components/mobile/movieDetail.vue";
 </script>
 
 <template>
-  <!-- <home />
-  <result /> -->
+  <!-- <home /> -->
+  <!-- <result /> -->
   <movieDetail />
-  <RouterView />
+  <!-- <RouterView /> -->
 </template>
 
 <style scoped>

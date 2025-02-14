@@ -1,8 +1,11 @@
-# IAMDb
+# IAMDb  
 
-This template should help get you started developing with Vue 3 in Vite.
+IAMDb is a Vue 3 application that allows users to search for movies using an external API. It fetches movie details, including ratings, summaries, and more, providing a user-friendly interface for movie enthusiasts.   
 
-## Recommended IDE Setup
+## Features  
+- Search for movies by title  
+- View detailed information about each movie  
+- Responsive design for optimal viewing on various devices  
 
 [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
 
