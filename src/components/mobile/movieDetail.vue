@@ -1,76 +1,105 @@
-<script setup></script>
+<script setup>
+import { useRoute, useRouter } from "vue-router";
+import { ref } from "vue";
+const route = useRoute();
+const movieId = route.params.id;
+const movie = ref(null);
+const router = useRouter();
+const background = movie.images;
+
+
+const fetchMovieDetails = async () => {
+  const response = await fetch(
+    `https://moviesapi.codingfront.dev/api/v1/movies/${movieId}`
+  );
+  const movieDetails = await response.json();
+  movie.value = movieDetails;
+  console.log(movie);
+  const goBack = () => {
+    router.go(-1);
+  };
+};
+
+fetchMovieDetails();
+</script>
 <template>
   <div class="movie-container">
-    <img class="movie-poster" src="" alt="" />
-    <div class="movie-detail-container">
-      <button class="btn-back">
-        <img src="@/assets/images/angle-left.svg" />
-      </button>
+    <div class="back-poster" :style="{ background: `url(${movie?.images})` }" >
+      <div class="movie-detail-container">
+        <button @click="goBack" class="btn-back">
+          <img src="@/assets/images/angle-left.svg" />
+        </button>
 
-      <div class="movie-name"><h1>The Dark Knight</h1></div>
-      <div class="movie-ctg">Action, Crime, Drama</div>
-      <p class="movie-overview">
-        When the menace known as the Joker wreaks havoc and chaos on the people
-        of Gotham, Batman must accept one of the greatest psychological and
-        physical tests of his ability to fight injustice.
-      </p>
-      <div class="more-info">
-        <div class="box">PG-13</div>
-        <div class="box">2008</div>
-        <div class="box runtime">
-          <img src="@/assets/images/duration.svg" alt="" />
-          <div><span>152</span> min</div>
+        <div class="movie-name">
+          <h1>
+            {{ movie.title }}
+          </h1>
         </div>
-      </div>
-      <div class="rating">
-        <div>
-          <svg width="100" height="100" view-box="0 0 100 100">
-            <circle
-              cx="50"
-              cy="50"
-              r="40"
-              stroke="#333"
-              stroke-width="10"
-              fill="none"
-            />
-            <circle
-              cx="50"
-              cy="50"
-              r="40"
-              stroke="#6a00ff"
-              stroke-width="10"
-              stroke-dasharray="283"
-              stroke-dashoffset=""
-              stroke-linecap="round"
-              transform="rotate(-90 50 50)"
-            />
-            <circle cx="50" cy="50" r="38" fill="black" />
-            <text
-              class="rate-value"
-              x="50"
-              y="55"
-              text-anchor="middle"
-              fill="white"
-            >
-              9.1
-            </text>
-          </svg>
+        <div class="movie-ctg" v-for="genre in movie.genres">
+          <div>{{ genre }}</div>
         </div>
-        <!-- <div class="circle-rating">9.1</div> -->
-
-        <div class="imdb">
-          <div>2,528,462</div>
-          <div>ratings on IMDB</div>
-        </div>
-        <div class="other">
-          <div>94% on Rotten Tomatoes</div>
-          <div>84/100 on Metacritic</div>
-        </div>
+        <p class="movie-plot">
+          {{ movie.plot }}
+        </p>
       </div>
     </div>
+    <div class="more-info">
+      <div class="box">PG-13</div>
+      <div class="box">{{ movie.year }}</div>
+      <div class="box runtime">
+        <img src="@/assets/images/duration.svg" alt="" />
+        <div>{{ movie.runtime }}</div>
+      </div>
+    </div>
+    <div class="rating">
+      <div>
+        <svg width="100" height="100" view-box="0 0 100 100">
+          <circle
+            cx="50"
+            cy="50"
+            r="40"
+            stroke="#333"
+            stroke-width="10"
+            fill="none"
+          />
+          <circle
+            cx="50"
+            cy="50"
+            r="40"
+            stroke="#6a00ff"
+            stroke-width="10"
+            stroke-dasharray="283"
+            stroke-dashoffset="{{ movie.imdb_rating }}"
+            stroke-linecap="round"
+            transform="rotate(-90 50 50)"
+          />
+          <circle cx="50" cy="50" r="38" fill="black" />
+          <text
+            class="rate-value"
+            x="50"
+            y="55"
+            text-anchor="middle"
+            fill="white"
+          >
+            {{ movie.imdb_rating }}
+          </text>
+        </svg>
+      </div>
+      <!-- <div class="circle-rating">9.1</div> -->
+
+      <div class="imdb">
+        <div>{{ movie.imdb_votes }}</div>
+        <div>ratings on IMDB</div>
+      </div>
+      <div class="other">
+        <div>94% on Rotten Tomatoes</div>
+        <div>{{ movie.metascore }}/100 on Metacritic</div>
+      </div>
+    </div>
+
     <div class="add-fav-box">
       <div class="poster-box">
-        <img class="poster" src="@/assets/images/darknight.jpg" alt="" />
+        <img class="poster" :src="movie.poster" alt="" />
       </div>
       <button class="add-fav-btn">Add to Favorite</button>
     </div>
@@ -79,27 +108,27 @@
       <table>
         <tr>
           <th class="left">Directors</th>
-          <td>data</td>
+          <td>{{ movie.director }}</td>
         </tr>
         <tr>
           <th>Writers</th>
-          <td>data</td>
+          <td>{{ movie.writer }}</td>
         </tr>
         <tr>
           <th>Actors</th>
-          <td>data</td>
+          <td>{{ movie.actors }}</td>
         </tr>
         <tr>
           <th>Country</th>
-          <td>data</td>
+          <td>{{ movie.country }}</td>
         </tr>
         <tr>
           <th>Language</th>
-          <td>data</td>
+          <td>{{ movie.language }}</td>
         </tr>
         <tr>
           <th>Awards</th>
-          <td>data</td>
+          <td>{{ movie.awards }}</td>
         </tr>
       </table>
     </div>
@@ -109,8 +138,14 @@
 .movie-container {
   margin-bottom: 100px;
 }
+.back-poster {
+width: 100%;
+object-fit:contain;
+background: linear-gradient(180deg, rgba(7, 13, 35, 0) 0%, rgba(7, 13, 35, 0.7) 28.5%, rgba(7, 13, 35, 0.9) 60%, #070D23 99%);
+
+}
 .movie-poster {
-  background: red;
+  /* background: red; */
 }
 
 .btn-back {
@@ -124,13 +159,17 @@
 .movie-name {
   margin-top: 100px;
 }
+.movie-image{
+  width: 100%;
+  position: relative;
+}
 .movie-ctg {
   font-weight: 300;
   font-size: 12px;
   line-height: 14.52px;
   opacity: 40%;
 }
-.movie-overview {
+.movie-plot {
   width: 406px;
   font-weight: 400;
   line-height: 24px;
@@ -248,7 +287,7 @@ td {
   text-align: left;
   border-bottom: 1px solid #ccc;
   /* padding: 8px;   */
-  padding: 12px 0;
+  padding: 12px 10px;
 }
 
 tr:last-child th,

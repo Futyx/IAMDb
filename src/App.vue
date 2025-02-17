@@ -1,14 +1,9 @@
-<script setup>
-import home from "./components/mobile/home.vue";
-import result from "./components/mobile/result.vue";
-import movieDetail from "./components/mobile/movieDetail.vue";
-</script>
+<script setup></script>
 
 <template>
-  <!-- <home /> -->
-  <!-- <result /> -->
-  <movieDetail />
-  <!-- <RouterView /> -->
+  <Suspense>
+    <RouterView />
+  </Suspense>
 </template>
 
 <style scoped>

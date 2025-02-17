@@ -1,5 +1,7 @@
 <script setup>
-9
+import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+
 const query = ref("");
 const movies = ref([]);
 const genres = ref([]);
@@ -14,66 +16,72 @@ const fetchMovies = async () => {
     console.log("ok");
   }
   const result = await response.json();
+  
   movies.value = result.data;
-  // console.log(movies.value[0].title);
-  // array.forEach(element => {
-    
-  // });
+  console.log(movies.value);
 
-  // genres.value = result.genres;
-  //   console.log(movies.value.data);
-getGenres();
-
-
+  getGenres(result.data); 
 };
-const getGenres = () => {  
-  const allGenres = movies.value.flatMap(movie => movie.genres );  
-  genres.value = Array.from(new Set(allGenres.map(genre => genre.trim())));  
-  console.log(genres.value);  
-};  
+const getGenres = (movieData) => {
+  const allGenres = movieData.flatMap((movie) => movie.genres);
+  genres.value = Array.from(new Set(allGenres));
+};
 fetchMovies();
 
+const router = useRouter();
+const route = useRoute();
 
-const search = computed(() => {
-  return movies.filter((movie) => {
-    //     const jobsFiltered = person.jobs.some(job => job.toLowerCase().includes(query.value.toLowerCase().trim()));
-    const query = movie.name
-      .toLowerCase()
-      .includes(query.value.toLowerCase().trim());
-    //     return jobsFiltere || name;
-  });
-});
+const search = () => {
+  
+  router.push({ path: "/movies", query: { search: query.value } });
+};
+
+const findCtg = (genre) => {
+  router.push({ path: "/movies", query: { category: genre } });
+  // console.log(genre);
+  
+};
 </script>
 
 <template>
   <div class="home">
     <h1>IAMDb</h1>
     <div class="search">
-      <img src="@/assets/images/search.svg" />
-      <input v-model="query" type="text" id="search" />
+      <button @click="search">
+        <img src="@/assets/images/search.svg" />
+      </button>
+      <input v-model="query" type="text" id="search" @keydown.enter="search" />
       <div class="mic-box">
         <img class="mic-icon" src="@/assets/images/microphone.svg" />
       </div>
     </div>
     <div class="category">
       <ul class="ctg-list">
-        <li  v-for="(genre, index) in (showMore ? genres : genres.slice(0, 4))" :key="genre" class="ctg-item">
-          {{ genre }}
+        <li
+          v-for="(genre, index) in showMore ? genres : genres.slice(0, 4)"
+          :key="genre"
+          class="ctg-item"
+        >
+          <button @click="findCtg(genre)">{{ genre }}</button>
         </li>
       </ul>
     </div>
-   
+
     <div class="more-btn-box">
-      <button @click="showMore = !showMore" class="more-ctg-btn">  
-      <div>{{ showMore ? 'Show Less' : 'Show More' }}</div>  
-      <div class="more-btn-vct">  
-        <img src="@/assets/images/Vector.svg" />  
-      </div>  
-    </button>  
+      <button @click="showMore = !showMore" class="more-ctg-btn">
+        <div>{{ showMore ? "Show Less" : "Show More" }}</div>
+        <div class="more-btn-vct">
+          <img src="@/assets/images/Vector.svg" />
+        </div>
+      </button>
     </div>
+    <!-- <movie-list :movies="filteredMovies" />   -->
   </div>
 </template>
 <style scoped>
+* {
+  color: white;
+}
 .home {
   margin-top: 304px;
 }
@@ -83,7 +91,8 @@ const search = computed(() => {
   padding: 12px 16px;
   border-radius: 16px;
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
 }
 h1 {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -99,11 +108,25 @@ h1 {
 .mic-icon {
   padding-left: 16px;
 }
+
+.search button,
+.category button {
+  background: none;
+  border: none;
+  padding: 6px 12px;
+  background: #222c4f;
+  border-radius: 8px;
+  font-size: 12px;
+}
+.search input {
+  flex-grow: 1;
+  padding: 0 14px;
+}
+
 input {
   background: none;
   border: none;
   outline: none;
-  color: white;
 }
 .category {
   margin-top: 32px;
@@ -113,11 +136,7 @@ input {
   font-size: 12px;
   justify-content: center;
 }
-.ctg-item {
-  padding: 6px 12px;
-  background: #222c4f;
-  border-radius: 8px;
-}
+
 .ctg-list {
   list-style: none;
   display: flex;
@@ -140,7 +159,6 @@ input {
   background: #222c4f;
   border: none;
   border-radius: 8px;
-  color: white;
   font-size: 12px;
   line-height: 14.52px;
   display: flex;
