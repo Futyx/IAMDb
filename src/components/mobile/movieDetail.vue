@@ -5,8 +5,6 @@ const route = useRoute();
 const movieId = route.params.id;
 const movie = ref(null);
 const router = useRouter();
-const background = movie.images;
-
 
 const fetchMovieDetails = async () => {
   const response = await fetch(
@@ -15,17 +13,34 @@ const fetchMovieDetails = async () => {
   const movieDetails = await response.json();
   movie.value = movieDetails;
   console.log(movie);
-  const goBack = () => {
-    router.go(-1);
-  };
+};
+const goBack = () => {
+  router.go(-1);
 };
 
 fetchMovieDetails();
+
+
+const getStrokeDashoffset = (rating) => {  
+  const circumference = 2 * Math.PI * 40; 
+  const offset = circumference - (rating * circumference) / 10; 
+  return offset;  
+};
 </script>
 <template>
   <div class="movie-container">
-    <div class="back-poster" :style="{ background: `url(${movie?.images})` }" >
-      <div class="movie-detail-container">
+    <div class="hero">
+      <div class="hero-img-container">
+        <img
+          class="hero-img"
+          :src="movie.images"
+          :alt="movie.title"
+          :title="movie.title"
+        />
+        <div class="gradient-overlay"></div>
+      </div>
+      <!-- <div class="back-poster" :style="{ background: `url(${movie?.images})` }"> -->
+      <div class="hero-detail-container">
         <button @click="goBack" class="btn-back">
           <img src="@/assets/images/angle-left.svg" />
         </button>
@@ -35,14 +50,18 @@ fetchMovieDetails();
             {{ movie.title }}
           </h1>
         </div>
-        <div class="movie-ctg" v-for="genre in movie.genres">
-          <div>{{ genre }}</div>
+        <div class="genres">
+          <div class="movie-ctg">
+            {{ movie.genres.join(", ") }}
+          </div>
         </div>
+
         <p class="movie-plot">
           {{ movie.plot }}
         </p>
       </div>
     </div>
+
     <div class="more-info">
       <div class="box">PG-13</div>
       <div class="box">{{ movie.year }}</div>
@@ -59,7 +78,7 @@ fetchMovieDetails();
             cy="50"
             r="40"
             stroke="#333"
-            stroke-width="10"
+            stroke-width="6"
             fill="none"
           />
           <circle
@@ -67,13 +86,15 @@ fetchMovieDetails();
             cy="50"
             r="40"
             stroke="#6a00ff"
-            stroke-width="10"
-            stroke-dasharray="283"
-            stroke-dashoffset="{{ movie.imdb_rating }}"
+            stroke-width="6"
+            stroke-dasharray="251.33"
+            :stroke-dashoffset="getStrokeDashoffset(movie.imdb_rating)"
             stroke-linecap="round"
             transform="rotate(-90 50 50)"
+            fill="none"
+
           />
-          <circle cx="50" cy="50" r="38" fill="black" />
+          <circle cx="50" cy="50" r="28" fill="black" />
           <text
             class="rate-value"
             x="50"
@@ -101,7 +122,7 @@ fetchMovieDetails();
       <div class="poster-box">
         <img class="poster" :src="movie.poster" alt="" />
       </div>
-      <button class="add-fav-btn">Add to Favorite</button>
+      <button @click="" class="add-fav-btn">Add to Favorite</button>
     </div>
     <div class="details">
       <h4>Details</h4>
@@ -139,13 +160,23 @@ fetchMovieDetails();
   margin-bottom: 100px;
 }
 .back-poster {
-width: 100%;
-object-fit:contain;
-background: linear-gradient(180deg, rgba(7, 13, 35, 0) 0%, rgba(7, 13, 35, 0.7) 28.5%, rgba(7, 13, 35, 0.9) 60%, #070D23 99%);
-
+  width: 100%;
+  height: 400px; 
+  background-size: cover; 
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative; 
+  overflow: hidden; 
 }
 .movie-poster {
-  /* background: red; */
+}
+.genres {
+  display: flex;
+}
+.hero-detail-container{
+  padding: 12px;
+  position: relative;
+  margin-top: 20px;
 }
 
 .btn-back {
@@ -156,11 +187,34 @@ background: linear-gradient(180deg, rgba(7, 13, 35, 0) 0%, rgba(7, 13, 35, 0.7) 
   height: 40px;
   width: 40px;
 }
-.movie-name {
+.movie-name h1 {
   margin-top: 100px;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 58.09px;
+ 
 }
-.movie-image{
-  width: 100%;
+.gradient-overlay {  
+  position: absolute;
+  top: 0;  
+  left: 0;  
+  right: 0;  
+  bottom: 0;  
+  background: linear-gradient(  
+    180deg,  
+    rgba(7, 13, 35, 0) 0%,  
+    rgba(7, 13, 35, 0.7) 28.5%,  
+    rgba(7, 13, 35, 0.9) 60%,  
+    #070D23 99%  
+  ); }
+
+.hero-img {
+  position: absolute;
+  width: 160%;
+  object-position: -130px;
+}
+.hero {
+  overflow: hidden;
   position: relative;
 }
 .movie-ctg {
@@ -178,13 +232,13 @@ background: linear-gradient(180deg, rgba(7, 13, 35, 0) 0%, rgba(7, 13, 35, 0.7) 
   opacity: 60%;
   margin-top: 18px;
   text-align: justify;
-  /* font-family: 'inter'; */
 }
 .more-info {
   margin: 18px 0;
   display: flex;
   gap: 12px;
   font-size: 12px;
+  padding: 0 12px;
 }
 .more-info .box {
   background: #222c4f;
@@ -202,13 +256,10 @@ img {
 .rating {
   display: flex;
   white-space: nowrap;
-
-  /* background: red; */
-  /* border: solid 2px red; */
+  padding: 0 12px;
 }
 .rating .imdb {
   margin: 13.5px 0 13.5px 18px;
-  /* font-family: ; */
 }
 .rating .other {
   opacity: 50%;
@@ -217,8 +268,7 @@ img {
   line-height: 24px;
   margin-left: 53px;
   margin-top: 16px;
-  /* margin-bottom: 16px; */
-  /* margin: 16px 53px 16px 0; */
+ 
 }
 .imdb :nth-child(1) {
   opacity: 80%;
@@ -245,9 +295,7 @@ img {
   width: 406px;
   text-align: center;
 }
-.add-fav-box {
-  text-align: center;
-}
+
 .add-fav-btn {
   background: #724cf9;
   border-radius: 12px;
@@ -257,21 +305,20 @@ img {
   font-weight: 400;
   font-size: 14px;
   border: none;
-
+cursor: pointer;
   position: fixed;
-  bottom: 0;
-  left: 124px;
-  /* margin: auto; */
-  /* position: absolute; */
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
 }
 .poster-box {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* position: relative; */
 }
 .details {
-  padding: 10px;
+  padding: 12px;
 }
 h4 {
   margin-bottom: 24px;
@@ -286,7 +333,6 @@ th,
 td {
   text-align: left;
   border-bottom: 1px solid #ccc;
-  /* padding: 8px;   */
   padding: 12px 10px;
 }
 
@@ -307,25 +353,5 @@ th {
   font-size: 16px;
   line-height: 18.75px;
 }
-/* .circle-rating{ 
-    width:10px;
-    height: 100px;
-    border-radius: 50%;
-    background: conic-gradiant(#6a00ff 91%, #333 0%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    font-weight: bold;
-    color: white;
-    position: relative;
-}
-.circle-rating::after{
-    content: "";
-    width: 70%;
-    height: 70%;
-    background: black;
-    position: absolute;
-    border-radius: 50%;
-} */
+
 </style>

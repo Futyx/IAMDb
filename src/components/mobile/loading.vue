@@ -4,8 +4,8 @@
 </template>
 <style scoped>  
         .loader {  
-            border: 8px solid #f3f3f3; /* Light grey */  
-            border-top: 8px solid red; /* Blue */  
+            border: 8px solid #f3f3f3; 
+            border-top: 8px solid red;  
             border-radius: 50%;  
             width: 50px;  
             height: 50px;  

@@ -1,9 +1,8 @@
 <script setup>
-
 import { ref, onMounted, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Loading from "./loading.vue";
- 
+
 const route = useRoute();
 const movies = ref([]);
 const searchQuery = ref(route.query.search || "");
@@ -56,9 +55,9 @@ const goBack = () => {
     <div class="result">
       <div class="head">
         <router-link>
-        <button @click="goBack" class="btn-back">
-          <img src="@/assets/images/angle-left.svg" />
-        </button>
+          <button @click="goBack" class="btn-back">
+            <img src="@/assets/images/angle-left.svg" />
+          </button>
         </router-link>
         <div class="head-title">
           <h2>Result</h2>
@@ -81,7 +80,6 @@ const goBack = () => {
         </div>
       </div>
     </div>
-    <!-- <div v-if="filteredMovies.length === 0">no movie found</div> -->
     <div v-if="filteredMovies">
       <div v-for="movie in filteredMovies" :key="movie.id" class="movie-box">
         <router-link
@@ -93,38 +91,45 @@ const goBack = () => {
               <img class="movie-poster" :src="movie.poster" alt="" />
             </div>
 
-            <ul>
-              <li class="movie-info">
-                <div class="movie-title">
-                  <div class="name">
-                    <h3>{{ movie.title }}</h3>
-                  </div>
-                  <div class="image"> 
-                    <img
-                      class="favorite"
-                      src="@/assets/images/favorite.svg"
-                      alt=""
-                    />
-                  </div>
+            <div class="movie-info">
+              <div class="movie-title">
+                <div class="movie-name">
+                  <h3>{{ movie.title }}</h3>
                 </div>
-                <div class="ctg-box">
-                  <div v-for="ctg in movie.genres" class="ctg">{{ ctg }}</div>
+                <div class="fav-box">
+                  <img
+                    class="favorite"
+                    src="@/assets/images/favorite.svg"
+                    alt=""
+                  />
                 </div>
-                <div class="movie-detail">
-                  <span>{{ movie.year }}</span>
-                  <span>{{ movie.country }}</span>
-                  <div class="rating">
-                    <img
-                      class="rate-star"
-                      src="@/assets/images/star.svg"
-                      alt=""
-                    /><span>
-                      {{ movie.imdb_rating }}
-                    </span>
-                  </div>
+              </div>
+              <div class="ctg-box">
+                <span
+                  v-for="(genre, index) in movie.genres"
+                  :key="index"
+                  class="genre"
+                >
+                  {{ genre
+                  }}
+                </span>
+              </div>
+              <div class="movie-detail">
+                <span>{{ movie.year }}</span>
+                <div class="circle"></div>
+                <span class="country">{{ movie.country }}</span>
+                <div class="circle"></div>
+                <div class="rating">
+                  <img
+                    class="rate-star"
+                    src="@/assets/images/star.svg"
+                    alt=""
+                  /><span>
+                    {{ movie.imdb_rating }}
+                  </span>
                 </div>
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
         </router-link>
       </div>
@@ -158,7 +163,6 @@ const goBack = () => {
   text-align: center;
 }
 h2 {
-  /* font-weight: 700; */
   font-size: 18px;
   line-height: 21.78px;
 }
@@ -196,22 +200,12 @@ input::placeholder {
 }
 
 .movie-link {
-  /* display: block;   */
   text-decoration: none;
   color: inherit;
 }
 
-.movie-box {
-  /* cursor: pointer;   */
-  /* margin-top: 32px;   */
-  /* display: flex; */
-  /* margin-top: 32px; */
-  /* border: solid 1px red; */
-}
 
 .movie-content {
-  /* padding: 10px;    */
-  /* background-color: #222c4f;  */
   border-radius: 8px;
   display: flex;
 }
@@ -221,37 +215,53 @@ h3 {
 }
 .ctg-box {
   display: flex;
-  word-wrap: break-word; 
-}
-.ctg {
-  font-weight: 300;
-  opacity: 40%;
-  font-size: 12px;
+  word-wrap: break-word;
 }
 
+.circle {
+  width: 6px;
+  height: 6px;
+  background: #222c4f;
+}
 .movie-info {
-  /* margin-left: 20px; */
+
+  flex-grow: 1;
+  margin-left: 20px;
+
 }
-ul li {
-  list-style: none;
-  margin: 0;
-}
+
 .movie-detail {
-  /* border:solid 2px pink; */
   display: flex;
   justify-content: space-between;
   margin-top: 10px;
   opacity: 80%;
   line-height: 21.78px;
+  align-items: center;
+
+}
+
+.movie-name {
+  flex-grow: 1;
 }
 .movie-title {
   display: flex;
   justify-content: space-between;
-  /* border: solid 1px rebeccapurple; */
   align-items: center;
-  /* grid-template-columns: 1fr 1fr; */
-  /* width: 264px; */
-  /* flex-grow: 1; */
+  flex-grow: 2;
+}
+.genre {
+  display: inline;
+  font-weight: 300;
+  opacity: 40%;
+  font-size: 12px;
+
+}
+.genre:not(:first-child){
+  padding-left: 5px;
+
+}
+.genre:not(:last-child)::after {
+  content: ", "; 
 }
 
 .movie-poster {
@@ -264,15 +274,10 @@ ul li {
 }
 .rate-star {
   margin-right: 6px;
-  /* align-self: flex-end; */
-  /* border: solid 1px rebeccapurple; */
 }
 .rating {
-  margin-right: 20px;
+
+  white-space: nowrap;
 }
-.favorite {
-  /* width: 24px; */
-  margin-left: 10px;
-  /* align-content: flex-end; */
-}
+
 </style>

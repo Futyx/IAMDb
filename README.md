@@ -3,7 +3,7 @@
 IAMDb is a Vue 3 application that allows users to search for movies using an external API. It fetches movie details, including ratings, summaries, and more, providing a user-friendly interface for movie enthusiasts.   
 
 ## Features  
-- Search for movies by title  
+- Search for movies by title  , country, year and genres
 - View detailed information about each movie  
 - Responsive design for optimal viewing on various devices  
 
