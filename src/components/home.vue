@@ -6,6 +6,7 @@ const query = ref("");
 const movies = ref([]);
 const genres = ref([]);
 const showMore = ref(false);
+const recognition = ref(null); 
 
 const fetchMovies = async () => {
   const response = await fetch(
@@ -16,11 +17,11 @@ const fetchMovies = async () => {
     console.log("ok");
   }
   const result = await response.json();
-  
+
   movies.value = result.data;
   console.log(movies.value);
 
-  getGenres(result.data); 
+  getGenres(result.data);
 };
 const getGenres = (movieData) => {
   const allGenres = movieData.flatMap((movie) => movie.genres);
@@ -32,19 +33,48 @@ const router = useRouter();
 const route = useRoute();
 
 const search = () => {
-  
   router.push({ path: "/movies", query: { search: query.value } });
 };
 
 const findCtg = (genre) => {
   router.push({ path: "/movies", query: { category: genre } });
   // console.log(genre);
-  
+};
+
+const setupRecognition = () => {
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (SpeechRecognition) {
+    recognition.value = new SpeechRecognition();
+    recognition.value.continuous = false;
+    recognition.value.interimResults = false;
+
+    recognition.value.onresult = (event) => {
+      query.value = event.results[0][0].transcript;
+      search();
+    };
+
+    recognition.value.onerror = (event) => {
+      console.error("Speech recognition error", event.error);
+    };
+  } else {
+    console.error("Speech recognition not supported in this browser.");
+  }
+};
+
+setupRecognition();
+
+const startListening = () => {
+  if (recognition.value) {
+    query.value = "";
+    recognition.value.start();
+  }
 };
 </script>
 
 <template>
-  <div class="home">
+  <div class="home-container">
     <h1>IAMDb</h1>
     <div class="search">
       <button @click="search">
@@ -52,38 +82,48 @@ const findCtg = (genre) => {
       </button>
       <input v-model="query" type="text" id="search" @keydown.enter="search" />
       <div class="mic-box">
-        <img class="mic-icon" src="@/assets/images/microphone.svg" />
+        <button @click="startListening">
+          <img class="mic-icon" src="@/assets/images/microphone.svg" />
+        </button>
       </div>
     </div>
-    <div class="category">
-      <ul class="ctg-list">
-        <li
-          v-for="(genre, index) in showMore ? genres : genres.slice(0, 4)"
-          :key="genre"
-          class="ctg-item"
-        >
-          <button @click="findCtg(genre)">{{ genre }}</button>
-        </li>
-      </ul>
-    </div>
+    <div class="genre-box">
+      <div class="genre">
+        <ul class="genre-list">
+          <li
+            v-for="(genre, index) in showMore ? genres : genres.slice(0, 4)"
+            :key="genre"
+            class="genre-item"
+          >
+            <button @click="findCtg(genre)">{{ genre }}</button>
+          </li>
+        </ul>
+      </div>
 
-    <div class="more-btn-box">
-      <button @click="showMore = !showMore" class="more-ctg-btn">
-        <div>{{ showMore ? "Show Less" : "Show More" }}</div>
-        <div class="more-btn-vct">
-          <img src="@/assets/images/Vector.svg" />
-        </div>
-      </button>
+      <div class="more-btn-box">
+        <button @click="showMore = !showMore" class="more-genre-btn">
+          <div>{{ showMore ? "Show Less" : "Show More" }}</div>
+          <div class="more-btn-vct">
+            <img src="@/assets/images/Vector.svg" />
+          </div>
+        </button>
+      </div>
     </div>
+  
+
     <!-- <movie-list :movies="filteredMovies" />   -->
   </div>
 </template>
 <style scoped>
 * {
   color: white;
+  
 }
-.home {
-  margin-top: 304px;
+.home-container {
+  padding: 0 12px;
+  max-width: 980px;
+  margin: 304px auto;
+
 }
 .search {
   margin-top: 32px;
@@ -105,12 +145,15 @@ h1 {
 .mic-box {
   border-left: solid 2px #070d23;
 }
+.mic-box button {
+  cursor: pointer;
+}
 .mic-icon {
   padding-left: 16px;
 }
 
 .search button,
-.category button {
+.genre button {
   background: none;
   border: none;
   padding: 6px 12px;
@@ -128,20 +171,21 @@ input {
   border: none;
   outline: none;
 }
-.category {
-  margin-top: 32px;
+.genre {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   font-size: 12px;
   justify-content: center;
 }
+.genre-box{
+  margin-top: 32px;
+}
 
-.ctg-list {
+.genre-list {
   list-style: none;
   display: flex;
   gap: 10px;
-  width: 406px;
   flex-wrap: wrap;
   margin: 0;
   padding: 0;
@@ -154,7 +198,7 @@ input {
   justify-content: center;
 }
 
-.more-ctg-btn {
+.more-genre-btn {
   padding: 6px 12px;
   background: #222c4f;
   border: none;
@@ -162,12 +206,32 @@ input {
   font-size: 12px;
   line-height: 14.52px;
   display: flex;
-
   cursor: pointer;
+
 }
 .more-btn-vct {
   height: 14px;
   width: 14px;
   padding: 0.5px 10.97px;
+}
+
+@media screen and (min-width: 1280px) {
+  .home-container{
+
+  }
+  h1 {
+    font-size: 140px;
+    line-height: 169.43px;
+  }
+  .genre-box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .more-btn-box{
+    padding: 0;
+  }
+ 
 }
 </style>

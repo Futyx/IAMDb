@@ -60,13 +60,14 @@ const goBack = () => {
           </button>
         </router-link>
         <div class="head-title">
-          <h2>Result</h2>
+          <h1>Result</h1>
 
           <div class="head-query" v-if="searchQuery">
             for “{{ searchQuery }}”
           </div>
         </div>
       </div>
+
       <div class="search">
         <img src="@/assets/images/search.svg" />
         <input
@@ -82,8 +83,8 @@ const goBack = () => {
     </div>
     <div v-if="filteredMovies">
       <div v-for="movie in filteredMovies" :key="movie.id" class="movie-box">
-        <router-link
-          :to="{ name: 'movie', params: { id: movie.id } }"
+        <RouterLink 
+          :to="{ name:'movie', params: { id: movie.id } }"
           class="movie-link"
         >
           <div class="movie-content">
@@ -94,7 +95,9 @@ const goBack = () => {
             <div class="movie-info">
               <div class="movie-title">
                 <div class="movie-name">
-                  <h3>{{ movie.title }}</h3>
+                  <h2>{{ movie.title  }}
+
+                  </h2>
                 </div>
                 <div class="fav-box">
                   <img
@@ -104,14 +107,13 @@ const goBack = () => {
                   />
                 </div>
               </div>
-              <div class="ctg-box">
+              <div class="genre-box">
                 <span
                   v-for="(genre, index) in movie.genres"
                   :key="index"
                   class="genre"
                 >
-                  {{ genre
-                  }}
+                  {{ genre }}
                 </span>
               </div>
               <div class="movie-detail">
@@ -131,7 +133,8 @@ const goBack = () => {
               </div>
             </div>
           </div>
-        </router-link>
+        </RouterLink>
+      
       </div>
     </div>
     <div v-else>
@@ -140,8 +143,14 @@ const goBack = () => {
   </div>
 </template>
 <style scoped>
+.movie-list{
+  max-width: 980px;
+  margin: 32px auto;
+}
 .result {
-  padding: 32px 12px;
+  padding: 32px 0px;
+ 
+  /* background: rebeccapurple; */
 }
 .head {
   display: flex;
@@ -162,7 +171,7 @@ const goBack = () => {
   justify-content: center;
   text-align: center;
 }
-h2 {
+h1 {
   font-size: 18px;
   line-height: 21.78px;
 }
@@ -172,6 +181,9 @@ h2 {
   opacity: 40%;
 }
 .search {
+  /* border: solid 1ps rebeccapurple;
+  background: rebeccapurple; */
+
   margin-top: 32px;
   background: #222c4f;
   padding: 12px 16px;
@@ -180,6 +192,7 @@ h2 {
   justify-content: space-between;
   font-size: 14px;
 }
+
 input {
   background: none;
   border: none;
@@ -204,16 +217,15 @@ input::placeholder {
   color: inherit;
 }
 
-
 .movie-content {
   border-radius: 8px;
   display: flex;
 }
-h3 {
+h2 {
   font-size: 24px;
   line-height: 29.05px;
 }
-.ctg-box {
+.genre-box {
   display: flex;
   word-wrap: break-word;
 }
@@ -224,19 +236,19 @@ h3 {
   background: #222c4f;
 }
 .movie-info {
-
   flex-grow: 1;
   margin-left: 20px;
-
 }
+
 
 .movie-detail {
   display: flex;
-  justify-content: space-between;
   margin-top: 10px;
   opacity: 80%;
   line-height: 21.78px;
   align-items: center;
+  gap: 12px;
+  font-size: 18px;
 
 }
 
@@ -254,14 +266,13 @@ h3 {
   font-weight: 300;
   opacity: 40%;
   font-size: 12px;
-
+  line-height: 14.52px;
 }
-.genre:not(:first-child){
+.genre:not(:first-child) {
   padding-left: 5px;
-
 }
 .genre:not(:last-child)::after {
-  content: ", "; 
+  content: ", ";
 }
 
 .movie-poster {
@@ -276,8 +287,20 @@ h3 {
   margin-right: 6px;
 }
 .rating {
-
   white-space: nowrap;
 }
 
+@media (min-width: 400px) {
+  .movie-poster{
+    width: 137px;
+    height: 137px;
+  }
+.movie-info{
+  padding-top: 10px;
+}
+h2{
+  font-size: 28px;
+}
+
+}
 </style>

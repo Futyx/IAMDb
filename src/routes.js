@@ -1,6 +1,10 @@
-import home from "./components/mobile/home.vue";
-import movieList from "./components/mobile/movieList.vue";
-import MovieDetail from "./components/mobile/movieDetail.vue";
+import home from "./components/home.vue";
+import movieList from "./components/movieList.vue";
+import movieDetailsMobile from "./components/movieDetailsMobile.vue";
+import movieDetailsScreen from "./components/movieDetailsScreen.vue";
+import MovieDetailsMobile from "./components/movieDetailsMobile.vue";
+import MovieDetailsScreen from "./components/movieDetailsScreen.vue";
+// import movieDetail from "./components/movieDetail.vue";
 const routes = [
   {
     path: "/",
@@ -14,8 +18,14 @@ const routes = [
   {
     path: "/movie/:id",
     name: "movie",
-    component: MovieDetail,
+    component: MovieDetailsScreen,
+    props: true,
   },
+  // {
+  //   path: "/movie/:name",
+  //   name: "movieDetail",
+  //   component: MovieDetail
+  // }
 ];
 
 export default routes;
