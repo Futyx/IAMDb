@@ -2,12 +2,13 @@
 import { ref, onMounted, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Loading from "./loading.vue";
+import { useMovieStore } from "@/stores/movieStore";
 
 const route = useRoute();
 const movies = ref([]);
 const searchQuery = ref(route.query.search || "");
 const router = useRouter();
-
+const movieStore = useMovieStore();
 // console.log(category.value);
 // console.log(searchQuery.value);
 
@@ -41,7 +42,6 @@ const filteredMovies = computed(() => {
   });
 });
 
-onMounted(fetchMovies);
 // watch(searchQuery, (newQuery) => {
 //   console.log("Search query changed to:", newQuery);
 // });
@@ -49,6 +49,62 @@ onMounted(fetchMovies);
 const goBack = () => {
   router.go(-1);
 };
+
+const isFavorite = (movie) => {
+  return movieStore.favorites.some((fav) => fav.id === movie.id);
+  
+};
+
+// const isHovered = ()=> {
+
+// }
+
+
+const toggleFavorite = (movie) => {
+  movieStore.toggleFavorite(movie);
+  // console.log(movie);
+  console.log(movieStore.favorites);
+
+  
+};
+// const isHovered = ref(false);
+
+// const isFavorite = (movie) => {
+//   return movieStore.favorites.some((fav) => fav.id === movie.id);
+// };
+// const toggleFavorite = (movie) => {
+//   movieStore.toggleFavorite(movie);
+// };
+
+// const onHover = () => {
+//   console.log("Mouse entered");
+//   isHovered.value = true;
+// };
+
+// const onLeave = () => {
+//   console.log("Mouse left");
+//   isHovered.value = false;
+// };
+// const toggleFavorite = (movie) => {
+//   const movieIndex = movieStore.favorites.findIndex(
+//     (fav) => fav.id === movie.id
+
+//   );
+//   console.log(movie.title);
+
+//   if (movieIndex !== -1) {
+//     movieStore.favorites.splice(movieIndex, 1);
+//     console.log(movieIndex);
+
+//   } else {
+//     movieStore.favorites.push(movie);
+//     console.log(movie);
+
+//   }
+//   console.log(movieStore.favorites);
+
+// };
+onMounted(fetchMovies);
 </script>
 <template>
   <div class="movie-list">
@@ -83,8 +139,8 @@ const goBack = () => {
     </div>
     <div v-if="filteredMovies">
       <div v-for="movie in filteredMovies" :key="movie.id" class="movie-box">
-        <RouterLink 
-          :to="{ name:'movie', params: { id: movie.id } }"
+        <RouterLink
+          :to="{ name: 'movie', params: { id: movie.id } }"
           class="movie-link"
         >
           <div class="movie-content">
@@ -95,16 +151,7 @@ const goBack = () => {
             <div class="movie-info">
               <div class="movie-title">
                 <div class="movie-name">
-                  <h2>{{ movie.title  }}
-
-                  </h2>
-                </div>
-                <div class="fav-box">
-                  <img
-                    class="favorite"
-                    src="@/assets/images/favorite.svg"
-                    alt=""
-                  />
+                  <h2>{{ movie.title }}</h2>
                 </div>
               </div>
               <div class="genre-box">
@@ -134,7 +181,28 @@ const goBack = () => {
             </div>
           </div>
         </RouterLink>
-      
+        <div class="fav-box">
+          <!-- <img
+            class="favorite"
+            :src="
+              isFavorite(movie.id)
+                ? '/src/assets/images/Fav-Liked.svg'
+                : '/src/assets/images/Fav-Idle.svg'
+            "
+            @click="toggleFavorite(movie)"
+            @mouseenter="onHover"
+            @mouseleave="onLeave"
+          /> -->
+          <img
+            class="favorite"
+            :src="
+              isFavorite(movie)
+                ? '/src/assets/images/Fav-Liked.svg'
+                : '/src/assets/images/Fav-Idle.svg'
+            "
+            @click="toggleFavorite(movie)"
+          />
+        </div>
       </div>
     </div>
     <div v-else>
@@ -143,14 +211,12 @@ const goBack = () => {
   </div>
 </template>
 <style scoped>
-.movie-list{
+.movie-list {
   max-width: 980px;
   margin: 32px auto;
 }
 .result {
   padding: 32px 0px;
- 
-  /* background: rebeccapurple; */
 }
 .head {
   display: flex;
@@ -164,6 +230,13 @@ const goBack = () => {
   border-radius: 18px;
   height: 40px;
   width: 40px;
+}
+.movie-box {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  border-bottom: solid 1px #222c4f;
+  padding-bottom: 20px;
 }
 .head-title {
   flex-grow: 1;
@@ -240,7 +313,6 @@ h2 {
   margin-left: 20px;
 }
 
-
 .movie-detail {
   display: flex;
   margin-top: 10px;
@@ -249,7 +321,6 @@ h2 {
   align-items: center;
   gap: 12px;
   font-size: 18px;
-
 }
 
 .movie-name {
@@ -289,18 +360,37 @@ h2 {
 .rating {
   white-space: nowrap;
 }
+.favorite {
+  display: block;
+  width: 24px;
+  margin-top: 15px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+.favorite {
+  /* content: url("/src/assets/images/Fav-Idle.svg"); */
+}
+
+/* Change the icon when hovered */
+/* .favorite:hover {
+  content: url("/src/assets/images/Fav-Hover.svg");
+} */
+
+/* Change the icon when clicked */
+/* .favorite:active {
+  content: url("/src/assets/images/Fav-Liked.svg");
+} */
 
 @media (min-width: 400px) {
-  .movie-poster{
+  .movie-poster {
     width: 137px;
     height: 137px;
   }
-.movie-info{
-  padding-top: 10px;
-}
-h2{
-  font-size: 28px;
-}
-
+  .movie-info {
+    padding-top: 10px;
+  }
+  h2 {
+    font-size: 28px;
+  }
 }
 </style>

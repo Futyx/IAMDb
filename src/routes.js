@@ -21,6 +21,12 @@ const routes = [
     component: MovieDetailsScreen,
     props: true,
   },
+  {
+    path:"/movie/:id",
+    name:"movieMobile",
+    component: MovieDetailsMobile,
+
+  }
   // {
   //   path: "/movie/:name",
   //   name: "movieDetail",

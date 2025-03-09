@@ -9,7 +9,8 @@ import App from './App.vue'
 
 // const router = createRouter()
 const app = createApp(App)
-const pinia = createPinia();  
+
+const store = createPinia();  
 const goBack = () => {
     router.go(-1);
   };
@@ -18,8 +19,5 @@ const router = createRouter({
     routes: Routes
 })
 
-app.use(pinia) 
-app.use(router)
-app.use(goBack)
 
-app.mount('#app')
+app.use(router).use(goBack).use(store).mount('#app')

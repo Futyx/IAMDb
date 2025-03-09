@@ -15,7 +15,7 @@ const fetchMovieDetails = async () => {
   console.log(movie);
 };
 const goBack = () => {
-  router.go(-1);
+  router.go(-1) 
 };
 
 fetchMovieDetails();
@@ -27,7 +27,7 @@ const getStrokeDashoffset = (rating) => {
 };
 </script>
 <template>
-  <div class="container">
+  <div class="container" v-if="movie">
     <div class="hero-img-box">
       <img :src="movie.images" :alt="movie.title" :title="movie.title" />
       <div class="gradient"></div>
@@ -384,6 +384,7 @@ th {
   font-size: 16px;
   line-height: 18.75px;
 }
+
 
 
 

@@ -1,6 +1,11 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
+// import fetchMovies from "@/compositions/Api";
+import { useMovieStore } from "@/stores/movieStore"; // Import the store
+
+
+const movieStore = useMovieStore();
 
 const query = ref("");
 const movies = ref([]);
@@ -8,26 +13,6 @@ const genres = ref([]);
 const showMore = ref(false);
 const recognition = ref(null); 
 
-const fetchMovies = async () => {
-  const response = await fetch(
-    "https://moviesapi.codingfront.dev/api/v1/movies"
-  );
-
-  if (!response.ok) {
-    console.log("ok");
-  }
-  const result = await response.json();
-
-  movies.value = result.data;
-  console.log(movies.value);
-
-  getGenres(result.data);
-};
-const getGenres = (movieData) => {
-  const allGenres = movieData.flatMap((movie) => movie.genres);
-  genres.value = Array.from(new Set(allGenres));
-};
-fetchMovies();
 
 const router = useRouter();
 const route = useRoute();
@@ -36,6 +21,9 @@ const search = () => {
   router.push({ path: "/movies", query: { search: query.value } });
 };
 
+onMounted(() => {
+  movieStore.fetchMovies();
+});
 const findCtg = (genre) => {
   router.push({ path: "/movies", query: { category: genre } });
   // console.log(genre);
@@ -91,7 +79,7 @@ const startListening = () => {
       <div class="genre">
         <ul class="genre-list">
           <li
-            v-for="(genre, index) in showMore ? genres : genres.slice(0, 4)"
+            v-for="(genre, index) in showMore ? movieStore.genres : movieStore.genres.slice(0, 4)"
             :key="genre"
             class="genre-item"
           >

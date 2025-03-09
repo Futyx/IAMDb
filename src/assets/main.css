@@ -1,15 +1,12 @@
 @import "./base.css";
 
 #app {
-  max-width: 430px;
   margin: 0 auto;
   font-weight: normal;
-  /* border: solid 2px red; */
 }
 
 a {
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
   transition: 0.4s;
   padding: 3px;
 }
