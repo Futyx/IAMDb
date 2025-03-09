@@ -1,7 +1,7 @@
 <script setup>
 import movieDetailsMobile from "./movieDetailsMobile.vue";
 import { useRoute, useRouter } from "vue-router";
-import { onMounted, onBeforeUnmount, watch } from "vue";
+import { onMounted, onBeforeUnmount } from "vue";
 import { ref } from "vue";
 import MovieDetailsMobile from "./movieDetailsMobile.vue";
 import { useMovieStore } from "@/stores/movieStore";
@@ -267,15 +267,7 @@ fetchMovieDetails();
   width: 40px;
   margin-bottom: 100px;
 }
-.image-rate {
-  /* background: palegreen; */
-  /* flex-grow: 1; */
-}
-.details {
-  /* background: palevioletred; */
-  /* flex-grow: 1; */
-  width: auto;
-}
+
 .genres {
   display: flex;
 }

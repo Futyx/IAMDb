@@ -157,6 +157,7 @@ const getStrokeDashoffset = (rating) => {
     </div>
   </div>
 </template>
+
 <style scoped>
 .container {
   margin-bottom: 100px;
@@ -233,12 +234,6 @@ const getStrokeDashoffset = (rating) => {
   );
 }
 
-/* .hero-img {
-  overflow: hidden;           
-  position: absolute;
-  width: 160%;
-  object-position: -130px;
-} */
 .hero {
   position: relative;
   width: 100%;
@@ -363,8 +358,12 @@ table {
 th,
 td {
   text-align: left;
-  border-bottom: 1px solid #ccc;
-  padding: 12px 10px;
+  border-bottom: 1px solid #222c4f;
+  padding: 12px 0;
+}
+
+td{
+  padding-left: 95px;
 }
 
 tr:last-child th,
@@ -384,8 +383,5 @@ th {
   font-size: 16px;
   line-height: 18.75px;
 }
-
-
-
 
 </style>

@@ -1,42 +1,66 @@
 <script setup>
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted, computed, } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Loading from "./loading.vue";
 import { useMovieStore } from "@/stores/movieStore";
+import { useInfiniteScroll } from "@vueuse/core";
 
 const route = useRoute();
 const movies = ref([]);
 const searchQuery = ref(route.query.search || "");
 const router = useRouter();
 const movieStore = useMovieStore();
-// console.log(category.value);
-// console.log(searchQuery.value);
+const currentPage = ref(1);
+const totalPages = ref(1);
+const isLoading = ref(false);
+const scrollTarget = ref(null); 
 
-const fetchMovies = async () => {
-  const response = await fetch(
-    "https://moviesapi.codingfront.dev/api/v1/movies"
-  );
-  if (response.ok) {
-    const result = await response.json();
-    movies.value = result.data;
-    // filterMovies();
+
+const fetchMovies = async (page) => {
+  if (isLoading.value) return;
+  isLoading.value = true;
+
+  try {
+    const response = await fetch(
+      `https://moviesapi.codingfront.dev/api/v1/movies?page=${page}&limit=10`
+    );
+    if (response.ok) {
+      const result = await response.json();
+      movies.value = [...movies.value, ...result.data];
+      totalPages.value = result.totalPages;
+    }
+  } catch (error) {
+    console.error("Failed to fetch movies:", error);
+  } finally {
+    isLoading.value = false;
   }
 };
+
+onMounted(() => {
+  fetchMovies(currentPage.value);
+});
+
+const loadMoreMovies = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value += 1;
+    fetchMovies(currentPage.value);
+  }
+};
+
+useInfiniteScroll(scrollTarget, loadMoreMovies, { distance: 5 });
+
 const filteredMovies = computed(() => {
   const searchTerm = searchQuery.value.toLowerCase();
   const searchProperties = ["title", "country", "year"];
   const category = route.query.category
     ? route.query.category.toLowerCase()
     : "";
-
   return movies.value.filter((movie) => {
     const matchesSearch = searchProperties.some((prop) =>
       movie[prop].toString().toLowerCase().includes(searchTerm)
     );
     const matchesCategory =
       !category || movie.genres.map((g) => g.toLowerCase()).includes(category);
-
-    // console.log(matchesSearch);
 
     return matchesSearch && matchesCategory;
   });
@@ -52,62 +76,18 @@ const goBack = () => {
 
 const isFavorite = (movie) => {
   return movieStore.favorites.some((fav) => fav.id === movie.id);
-  
 };
-
-// const isHovered = ()=> {
-
-// }
-
 
 const toggleFavorite = (movie) => {
   movieStore.toggleFavorite(movie);
   // console.log(movie);
   console.log(movieStore.favorites);
-
-  
 };
-// const isHovered = ref(false);
 
-// const isFavorite = (movie) => {
-//   return movieStore.favorites.some((fav) => fav.id === movie.id);
-// };
-// const toggleFavorite = (movie) => {
-//   movieStore.toggleFavorite(movie);
-// };
-
-// const onHover = () => {
-//   console.log("Mouse entered");
-//   isHovered.value = true;
-// };
-
-// const onLeave = () => {
-//   console.log("Mouse left");
-//   isHovered.value = false;
-// };
-// const toggleFavorite = (movie) => {
-//   const movieIndex = movieStore.favorites.findIndex(
-//     (fav) => fav.id === movie.id
-
-//   );
-//   console.log(movie.title);
-
-//   if (movieIndex !== -1) {
-//     movieStore.favorites.splice(movieIndex, 1);
-//     console.log(movieIndex);
-
-//   } else {
-//     movieStore.favorites.push(movie);
-//     console.log(movie);
-
-//   }
-//   console.log(movieStore.favorites);
-
-// };
-onMounted(fetchMovies);
 </script>
+
 <template>
-  <div class="movie-list">
+  <div class="movie-list" ref="scrollTarget">
     <div class="result">
       <div class="head">
         <router-link>
@@ -210,6 +190,8 @@ onMounted(fetchMovies);
     </div>
   </div>
 </template>
+
+
 <style scoped>
 .movie-list {
   max-width: 980px;
@@ -254,9 +236,6 @@ h1 {
   opacity: 40%;
 }
 .search {
-  /* border: solid 1ps rebeccapurple;
-  background: rebeccapurple; */
-
   margin-top: 32px;
   background: #222c4f;
   padding: 12px 16px;
@@ -367,19 +346,6 @@ h2 {
   cursor: pointer;
   transition: transform 0.3s ease;
 }
-.favorite {
-  /* content: url("/src/assets/images/Fav-Idle.svg"); */
-}
-
-/* Change the icon when hovered */
-/* .favorite:hover {
-  content: url("/src/assets/images/Fav-Hover.svg");
-} */
-
-/* Change the icon when clicked */
-/* .favorite:active {
-  content: url("/src/assets/images/Fav-Liked.svg");
-} */
 
 @media (min-width: 400px) {
   .movie-poster {
