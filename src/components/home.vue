@@ -1,21 +1,21 @@
-
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useMovieStore } from "@/stores/movieStore";
 
 const movieStore = useMovieStore();
+const router = useRouter();
+
 const query = ref("");
 const showMore = ref(false);
 const recognition = ref(null);
-const router = useRouter();
 
 const search = () => {
   router.push({ path: "/movies", query: { search: query.value } });
 };
 
 const findGnr = (genre) => {
-  router.push({ path: "/movies", query: { category: genre } });
+  router.push({ path: "/movies", query: { genres: genre } });
 };
 
 const setupRecognition = () => {
@@ -49,9 +49,8 @@ const startListening = () => {
 
 onMounted(() => {
   movieStore.fetchMovies();
+  setupRecognition();
 });
-
-setupRecognition();
 </script>
 
 <template>
@@ -59,12 +58,22 @@ setupRecognition();
     <h1>IAMDb</h1>
     <div class="search">
       <button @click="search">
-        <img src="@/assets/images/search.svg" />
+        <img src="@/assets/images/search.svg" alt="search in name genre ..." />
       </button>
-      <input v-model="query" type="text" id="search" @keydown.enter="search" />
+      <input
+        v-model="query"
+        type="text"
+        id="search"
+        @keydown.enter="search"
+        title="please type name genre ..."
+      />
       <div class="mic-box">
         <button @click="startListening">
-          <img class="mic-icon" src="@/assets/images/microphone.svg" />
+          <img
+            class="mic-icon"
+            src="@/assets/images/microphone.svg"
+            alt="voice search"
+          />
         </button>
       </div>
     </div>
@@ -84,7 +93,7 @@ setupRecognition();
       <button @click="showMore = !showMore" class="more-genre-btn">
         <div>{{ showMore ? "Show Less" : "Show More" }}</div>
         <div class="more-btn-vct">
-          <img src="@/assets/images/Vector.svg" />
+          <img src="@/assets/images/Vector.svg" alt="show more" />
         </div>
       </button>
     </div>
@@ -104,7 +113,7 @@ setupRecognition();
 h1 {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  font-size: 100px;
+  font-size: 140px;
   font-weight: 900;
   line-height: 121.02px;
   text-align: center;
@@ -141,7 +150,8 @@ h1 {
 }
 .search input {
   flex-grow: 1;
-  padding: 0 14px;
+  padding: 0 16px;
+  width: 50%;
 }
 
 input {
@@ -156,14 +166,12 @@ input {
   align-items: center;
   justify-content: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .genre {
-  display: flex;
-  flex-wrap: wrap;
   gap: 10px;
   font-size: 12px;
-  justify-content: center;
 }
 
 .genre-list {
@@ -198,15 +206,24 @@ input {
   padding: 0.5px 10.97px;
 }
 
-@media screen and (min-width: 1280px) {
- 
+@media screen and (min-width: 420px) and (max-width: 780px) {
   h1 {
-    font-size: 140px;
-    line-height: 169.43px;
+    font-size: 120px;
+    line-height: 100.43px;
+
   }
 
-  .more-btn-box {
-    padding: 0;
+}
+
+
+@media (max-width: 420px) {
+  h1 {
+    font-size: 100px;
+    line-height: 80.43px;
+  }
+
+  .genre-box {
+    font-size: 10px;
   }
 }
 </style>

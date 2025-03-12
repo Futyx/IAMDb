@@ -1,10 +1,14 @@
 <script setup>
 import { useRoute, useRouter } from "vue-router";
 import { ref } from "vue";
+import { useMovieStore } from "@/stores/movieStore";
+
 const route = useRoute();
 const movieId = route.params.id;
 const movie = ref(null);
 const router = useRouter();
+const movieStore = useMovieStore();
+
 
 const fetchMovieDetails = async () => {
   const response = await fetch(
@@ -12,10 +16,14 @@ const fetchMovieDetails = async () => {
   );
   const movieDetails = await response.json();
   movie.value = movieDetails;
-  console.log(movie);
 };
 const goBack = () => {
   router.go(-1) 
+};
+
+const toggleFavorite = (movie) => {
+  movieStore.toggleFavorite(movie);
+
 };
 
 fetchMovieDetails();
@@ -25,6 +33,7 @@ const getStrokeDashoffset = (rating) => {
   const offset = circumference - (rating * circumference) / 10;
   return offset;
 };
+
 </script>
 <template>
   <div class="container" v-if="movie">
@@ -123,7 +132,7 @@ const getStrokeDashoffset = (rating) => {
         </div>
       </div>
 
-      <button @click="" class="add-fav-btn">Add to Favorite</button>
+      <button @click="toggleFavorite(movie)" class="add-fav-btn">Add to Favorite</button>
 
       <div class="details">
         <h4>Details</h4>
@@ -194,7 +203,7 @@ const getStrokeDashoffset = (rating) => {
 
 .btn-back {
   padding: 10px;
-  background: #222c4f;
+  background: var(--secondary-color);
   border: none;
   border-radius: 18px;
   height: 40px;
@@ -261,7 +270,7 @@ const getStrokeDashoffset = (rating) => {
   font-size: 12px;
 }
 .more-info .box {
-  background: #222c4f;
+  background: var(--secondary-color);
   padding: 6px 12px;
   border-radius: 8px;
 }
@@ -323,7 +332,7 @@ svg {
 }
 
 .add-fav-btn {
-  background: #724cf9;
+  background: var(--third-color);
   border-radius: 12px;
   width: 406px;
   padding: 12px 0 12px;
@@ -333,7 +342,7 @@ svg {
   border: none;
   cursor: pointer;
   position: fixed;
-  bottom: 5px;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
@@ -353,12 +362,13 @@ h4 {
 table {
   width: 100%;
   border-collapse: collapse;
+  margin-bottom: 50px;
 }
 
 th,
 td {
   text-align: left;
-  border-bottom: 1px solid #222c4f;
+  border-bottom: 1px solid var(--secondary-color);
   padding: 12px 0;
 }
 
