@@ -28,7 +28,7 @@ This project is engineered to highlight your expertise in complex data handling,
 
 ## 🚀 Live Demo
 
-[![Live Demo](https://img.shields.io/badge/Launch%20Movie%20App-4FC08D?style=for-the-badge&logo=vuedotjs)](YOUR_GITHUB_PAGES_LINK_HERE)
+[![Live Demo](https://img.shields.io/badge/Launch%20Movie%20App-4FC08D?style=for-the-badge&logo=vuedotjs)]()
 
 ---
 
@@ -55,6 +55,4 @@ This project is set up with Vite and Vue 3 and requires Node.js and npm to run.
     npm run build
     ```
 
----
-
-**⚠️ اقدام لازم:** لطفاً عبارت **`YOUR_GITHUB_PAGES_LINK_HERE`** را با لینک واقعی و کارای لایو دموی خود جایگزین کنید.
+---.
