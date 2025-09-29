@@ -28,7 +28,7 @@ This project is engineered to highlight your expertise in complex data handling,
 
 ## 🚀 Live Demo
 
-[![Live Demo](https://img.shields.io/badge/Launch%20Movie%20App-4FC08D?style=for-the-badge&logo=vuedotjs)]()
+[Live Demo](https://img.shields.io/badge/Launch%20Movie%20App-4FC08D?style=for-the-badge&logo=vuedotjs)
 
 ---
 
