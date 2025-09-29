@@ -26,12 +26,6 @@ This project is engineered to highlight your expertise in complex data handling,
 
 ---
 
-## 🚀 Live Demo
-
-[Live Demo](https://img.shields.io/badge/Launch%20Movie%20App-4FC08D?style=for-the-badge&logo=vuedotjs)
-
----
-
 ## 🛠️ Getting Started
 
 This project is set up with Vite and Vue 3 and requires Node.js and npm to run.
