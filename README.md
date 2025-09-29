@@ -49,4 +49,3 @@ This project is set up with Vite and Vue 3 and requires Node.js and npm to run.
     npm run build
     ```
 
----.
